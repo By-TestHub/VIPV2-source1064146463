@@ -7,12 +7,23 @@ local AllowedUsers = {
     "Bearbot_725",
     "jFzZ8MN",
     "Geanteliza2642",
-     "Geanteliza2642",
     "eRSctg09227",
     "Timesmaceo147",
-     "Grinch_Z3U8",
+    "Grinch_Z3U8",
     "Rrp_TOEI",
-    "Ttm2215"
+    "Ttm2215",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
 }
 
 local Players = game:GetService("Players")
@@ -573,6 +584,7 @@ esp.HealthBar.Visible = true
 end)
 
 local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
 local highlightEnabled = false
 
 local function applyHighlight(char)
@@ -597,13 +609,39 @@ local function removeHighlights()
     end
 end
 
-Players.PlayerAdded:Connect(function(player)
+local function monitorPlayer(player)
+    if player == LocalPlayer then return end
+
     player.CharacterAdded:Connect(function(char)
-        if highlightEnabled and player ~= Players.LocalPlayer then
+        if highlightEnabled then
+            task.wait(0.05) 
             applyHighlight(char)
         end
     end)
-end)
+
+    if player.Character and highlightEnabled then
+        applyHighlight(player.Character)
+    end
+end
+
+Players.PlayerAdded:Connect(monitorPlayer)
+
+for _, player in pairs(Players:GetPlayers()) do
+    monitorPlayer(player)
+end
+
+local function toggleHighlight(state)
+    highlightEnabled = state
+    if highlightEnabled then
+        for _, player in pairs(Players:GetPlayers()) do
+            if player ~= LocalPlayer and player.Character then
+                applyHighlight(player.Character)
+            end
+        end
+    else
+        removeHighlights()
+    end
+end
 
 Tab5:Toggle({
     Title = "ไฮไลท์ปกติ",
@@ -641,7 +679,7 @@ Tab5:Slider({
     Value = {
         Min = 5,
         Max = 150,
-        Default = 20,
+        Default = 5,
     },
     Callback = function(value)
         _G.FOVPercent = value
@@ -658,18 +696,16 @@ Tab5:Dropdown({
     end
 })
 
--- ตั้งค่าเริ่มต้น
 _G.HitboxEnabled = false
 _G.HitboxSize = 20
 local originalSizes = {}
 
--- ฟังก์ชันคืนค่าขนาดตัวละครให้เป็นปกติ
 local function ResetPlayerHitbox(player)
     if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
         local hrp = player.Character.HumanoidRootPart
         if originalSizes[player] then
             hrp.Size = originalSizes[player]
-            hrp.Transparency = 1 -- หรือ 0 ถ้าปกติมองเห็น
+            hrp.Transparency = 1 
             hrp.Material = Enum.Material.Plastic
             hrp.Color = Color3.fromRGB(255, 255, 255)
             hrp.CanCollide = true
