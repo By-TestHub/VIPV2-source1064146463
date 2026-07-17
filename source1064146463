@@ -419,7 +419,6 @@ local activeConnections = {}
 
 local Circle = Drawing.new("Circle")
 Circle.Thickness = 2
-Circle.NumSides = 60
 Circle.Filled = false
 Circle.Transparency = 1
 Circle.Color = Color3.fromRGB(0, 170, 255)
